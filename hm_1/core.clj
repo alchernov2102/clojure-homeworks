@@ -21,9 +21,9 @@
     (if (empty? (rest coll))
       ;; base
       (fun init (first coll)) 
-      (my-reduce fun (fun init (first coll)) (rest coll))
-      ))
-  )
+      (my-reduce fun (fun init (first coll)) (rest coll)))))
+      
+  
 
 ;; nth examples
 (defn my-nth [coll n]
@@ -88,10 +88,12 @@
 
 (defn my-select-keys [map keys])
 
-(defn my-filter [pred coll])
-
-
-
+(defn my-filter [pred coll]
+  (if (empty? coll)
+    '()
+    (if (pred (first coll))
+      (cons (first coll) (my-filter pred (rest coll)))
+      (my-filter pred (rest coll)))))
 
 ;; Tests
 
