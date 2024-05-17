@@ -82,9 +82,21 @@
 
 (defn my-group-by [f coll])
 
-(defn my-keys [map])
-
-(defn my-vals [map])
+(defn my-keys [ascoll]
+  (if (empty? ascoll)
+    '()
+    ;; take only the first value each time (k)
+    (let [k (first(first ascoll))]
+      (cons k (my-keys (rest ascoll))))))
+          
+    
+(defn my-vals [ascoll]
+  (if (empty? ascoll)
+    '()
+    ;; take only the second value each time (v)
+    (let [v (last (first ascoll))]
+      (cons v (my-vals (rest ascoll))))))
+      
 
 (defn my-select-keys [map keys])
 
