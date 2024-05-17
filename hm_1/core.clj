@@ -96,7 +96,13 @@
     ;; take only the second value each time (v)
     (let [v (last (first ascoll))]
       (cons v (my-vals (rest ascoll))))))
-      
+
+;; alternatively without let
+
+(defn alt-vals [ascoll]
+  (if (empty? ascoll)
+    '()
+    (cons (last (first ascoll)) (alt-vals (rest ascoll)))))
 
 (defn my-select-keys [map keys])
 
