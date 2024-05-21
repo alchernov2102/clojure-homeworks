@@ -39,5 +39,36 @@
 ;;Take a set of functions and return a new function that takes a variable 
 ;;number of arguments and returns a sequence containing the result of 
 ;;applying each function left-to-right to the argument list.
+;;returns a vector ((juxt a b c) x) => [(a x) (b x) (c x)]
 
-(defn my-juxt [])
+;; Special case for 2 funcs
+(defn double-juxt [f g]
+  (fn [& args]
+    (cons (apply f args) (map g args))))
+    
+((double-juxt #(filter odd? %) reverse)[1 2 3 4 5])
+
+;; Using map and function literals
+(defn my-juxt [& fs]
+  (fn [& args] 
+    (if (empty? fs)
+      '()
+      (map #(apply % args) fs))))
+      
+;; Using loop and recursion (more verbose)
+(defn alt-juxt [& fs]
+  (fn [& args]
+    (loop [vect '()
+           funs fs] 
+      (if (empty? funs)
+        vect
+        (recur (cons (apply (first funs) args) vect) (rest funs))))))
+        
+((alt-juxt reverse reverse #(filter even? %) butlast)[1 2 3 4])
+
+
+;; Tests
+(= [21 6 1] ((my-juxt + max min) 2 3 5 1 6 4))
+(= ["HELLO" 5] ((my-juxt #(.toUpperCase %) count) "hello"))
+(= [2 6 4] ((my-juxt :a :c :b) {:a 2, :b 4, :c 6, :d 8 :e 10}))
+
