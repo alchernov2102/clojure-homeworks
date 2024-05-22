@@ -80,12 +80,18 @@
 
 (defn my-merge [map1 map2]
   (if (empty? map1)
-    map2
+    map2)
   (if (empty? map2)
     map1
-    (conj map1 map2)
-    )))
+    (conj map1 map2)))
     
+    
+;; For n maps
+;; example from core.clj/merge
+(defn n-merge [& ms]
+  (reduce #(conj %1 %2) ms))
+
+
 (defn my-group-by [f coll])
 
 (defn my-keys [ascoll]
