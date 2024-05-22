@@ -78,8 +78,14 @@
       ;; both colls are not empty
       (cons (first coll1) (my-concat (rest coll1) coll2)))))
 
-(defn my-merge [map1 map2])
-
+(defn my-merge [map1 map2]
+  (if (empty? map1)
+    map2
+  (if (empty? map2)
+    map1
+    (conj map1 map2)
+    )))
+    
 (defn my-group-by [f coll])
 
 (defn my-keys [ascoll]
