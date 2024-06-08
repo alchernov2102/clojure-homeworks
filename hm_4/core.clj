@@ -34,19 +34,27 @@
 
 (defn lecture-body [lecture]
   (str
-   (h/html [:div [:h1 (:title lecture)] [:hr] [:i (:category lecture)]] [:div [:p (lecture :body)]])))
+   (h/html [:div [:h1 (:title lecture)] [:hr] [:i (:category lecture)]] [:div [:p (:body lecture)]])))
    
+
   
-(def generate-routes
-  (for [lecture @lectures]
-    (compojur/GET (str "/" (generate-uri (:title lecture))) [] (lecture-body lecture))))
+;; (def generate-routes
+;;   (for [lecture @lectures]
+;;     (compojur/GET (str "/" (generate-uri (:title lecture))) [] (lecture-body lecture))))
 
 
-;; FIXME: Think how to define routes dynamically
+;; FIXME: Think how to define routes dynamically -- done via URL destruct
 (compojur/defroutes my-routes
   (compojur/GET "/" [] (main-page-body))
-  (apply compojur/routes generate-routes))
-   
+  (compojur/GET "/:id" [id] (lecture-body (first(filter (fn [e] (= (generate-uri (:title e)) id)) @lectures)))))
+  ;;(apply compojur/routes generate-routes)
+  
+      
+  
+(def id "how-does-repl-work")
+
+(filter (fn [e] (= (generate-uri (:title e)) id)) @lectures)
+
 (def app 
   (compojur/routes 
    my-routes
@@ -54,9 +62,5 @@
    
                   
 (defonce server
-  (jetty/run-jetty app {:port 3000
+  (jetty/run-jetty #'app {:port 3000
                               :join? false}))
-
-
-
-
