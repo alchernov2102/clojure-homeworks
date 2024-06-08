@@ -34,7 +34,7 @@
 
 (defn lecture-body [lecture]
   (str
-   (h/html [:div [:h1 (:title lecture)] [:hr] [:p (:category lecture)]] [:div [:p (lecture :body)]])))
+   (h/html [:div [:h1 (:title lecture)] [:hr] [:i (:category lecture)]] [:div [:p (lecture :body)]])))
    
   
 (def generate-routes
