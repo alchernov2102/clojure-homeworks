@@ -116,7 +116,30 @@
     '()
     (cons (last (first ascoll)) (alt-vals (rest ascoll)))))
 
-(defn my-select-keys [map keys])
+
+(defn my-select-keys [map keys] 
+  ;; for every key in keys
+  (reduce (fn[acc k] 
+            (let [value (k map)]
+              (if (nil? value)
+                ;; if value is not found in the map return '{}
+                acc
+                ;; return pair {:key value} if found
+                (assoc acc k value))))
+          {}
+          keys))
+          
+;; Alternatively using macro for
+
+(defn alt-select-keys [map keys]
+  (into {} (for [k keys]
+    (let [acc {}
+          value (k map)]
+      (if (nil? value)
+        acc
+        (assoc acc k value))))))
+        
+(alt-select-keys {:a 1 :b 2 :c 3} [:a :b :d])  
 
 (defn my-filter [pred coll]
   (if (empty? coll)
