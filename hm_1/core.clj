@@ -92,7 +92,14 @@
   (reduce #(conj %1 %2) ms))
 
 
-(defn my-group-by [f coll])
+(defn my-group-by [f coll]
+  (reduce (fn[acc value]
+            ;; add key with a result of calling f to each value
+            (let [k (f value)] 
+              (prn k)
+              (assoc acc k (conj (get acc k) value)) 
+              )
+            ) {} coll))
 
 (defn my-keys [ascoll]
   (if (empty? ascoll)
@@ -147,6 +154,15 @@
     (if (pred (first coll))
       (cons (first coll) (my-filter pred (rest coll)))
       (my-filter pred (rest coll)))))
+
+(defn alt-filter [pred coll]
+  (reduce (fn [acc e] 
+            (if (pred e) 
+              (conj acc e)
+              acc)) [] coll))
+
+(alt-filter odd? [1 2 3 4 5 7])
+
 
 ;; Tests
 
