@@ -84,14 +84,27 @@
     ;; get key and reduce a function for every value   
     (map (fn [[k vs]] [k (reduce f (map val vs))])) 
     ;; return map instead of list   
-    (into {})
-    ))
+    (into {})))
+    
 
-(comment
-  "Returned by (group-by key maps)"
-  {:a [[:a 1] [:a 3]], :b [[:b 2]]})
+;; Let's implement merging with a function for the pair of maps
+(defn merge-with-pair [f m1 m2]
+  (reduce (fn [m [k v]]
+            (assoc m k (if (contains? m k)
+                         (f (get m k) v)
+                         v)))
+          m1
+          m2))
 
-(my-merge-with + {:a 1 :b 2} {:a 3})
+;; Applying this logic to every pair of maps 
+(defn my-merge-with [f & maps]
+  (reduce (fn[m1 m2]
+            (reduce (fn [m [k v]]
+                      (assoc m k (if (contains? m k)
+                                   (f (get m k) v)
+                                   v))) m1 m2)) 
+          {}
+          maps))
 
 ;; Tests
 (= (my-merge-with * {:a 2, :b 3, :c 4} {:a 2} {:b 2} {:c 5})
@@ -101,3 +114,39 @@
 (= (my-merge-with concat {:a [3], :b [6]} {:a [4 5], :c [8 9]} {:b [7]})
    {:a [3 4 5], :b [6 7], :c [8 9]})
 
+
+;; Problem 158 - Decurry 
+(defn decurry
+  [curr-f]
+  (fn [& args]
+    (reduce (fn [f x] 
+             (f x))
+            curr-f
+            args)))
+
+((decurry (fn [a]
+            (fn [b]
+              (fn [c]
+                (fn [d]
+                  (+ a b c d))))))
+ 1 2 3 4)
+
+;; Tests
+(= 10 ((decurry (fn [a]
+                  (fn [b]
+                    (fn [c]
+                      (fn [d]
+                        (+ a b c d))))))
+       1 2 3 4))
+
+(= 24 ((decurry (fn [a]
+             (fn [b]
+               (fn [c]
+                 (fn [d]
+                   (* a b c d))))))
+       1 2 3 4))
+
+(= 25 ((decurry (fn [a]
+             (fn [b]
+               (* a b))))
+       5 5))
